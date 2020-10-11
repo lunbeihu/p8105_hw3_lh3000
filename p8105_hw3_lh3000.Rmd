@@ -7,10 +7,12 @@ output: github_document
 
 This is my solution to HW2.
 
-```{r setup, include = FALSE}
+```{r}
 library(tidyverse)
-library(p8105.datasets)
+library(patchwork)
+```
 
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   fig.width = 6,
   fig.asp = .6,
@@ -30,7 +32,10 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ### Problem 1
 
+Load the instacart data.
+
 ```{r}
+library(p8105.datasets)
 data("instacart")
 ```
 
@@ -137,5 +142,67 @@ accel_df %>%
   ggplot(aes(x = day_minute, y = activity_count, group = day_id, color = day)) +
   geom_line(alpha = .2) +
   geom_smooth(aes(group = day)) 
+```
+
+
+## Question 3
+
+Load the NY NOAA data.
+```{r}
+library(p8105.datasets)
+data("ny_noaa")
+```
+
+Data cleaning
+
+```{r}
+ny_noaa_df = ny_noaa %>% 
+  separate(date, into = c("year", "month", "day"), convert = TRUE) %>% 
+  mutate(
+    prcp = as.numeric(prcp),
+    tmax = as.numeric(tmax),
+    tmin = as.numeric(tmin),
+    month = month.abb[as.factor(month)],
+    prcp = prcp / 10,
+    tmax = tmax / 10,
+    tmin = tmin / 10
+  )
+```
+
+Make a two-panel plot showing the average max temperature in January and in July in each station across years.
+
+```{r}
+ny_noaa_df %>% 
+  filter(month == "Jan" | month == "Jul") %>% 
+  group_by(id, year, month) %>% 
+  summarize(avg_tmax = mean(tmax, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year, y = avg_tmax, group = id)) +
+  geom_point() +
+  geom_path(alpha = .05, size = .1) +
+  facet_grid(. ~ month)
+```
+
+Make a two-panel plot showing:
+
+(i) tmax vs tmin for the full dataset
+
+```{r}
+tmax_tmin_p = 
+  ny_noaa_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex()
+```
+
+(ii) the distribution of snowfall values greater than 0 and less than 100 separately by year
+
+```{r}
+snow_p =
+  ny_noaa_df %>% 
+  drop_na(snow) %>% 
+  filter(snow > 0 & snow < 100) %>% 
+  ggplot(aes(x = year, y = snow, fill = year)) +
+  geom_violin() 
+
+tmax_tmin_p + snow_p
 ```
 
