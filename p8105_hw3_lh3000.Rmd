@@ -121,6 +121,8 @@ accel_df =
   )
 ```
 
+There are `r nrow(accel_df)` observations and `r ncol(accel_df)`variables.
+
 Create a table on the total activity over the day.
 
 ```{r}
@@ -134,6 +136,9 @@ accel_df %>%
   knitr::kable()
 ```
 
+For the trend, Fridays tend to have the longest duration of activity.
+For week 4 and 5, it looks like Saturdays there is no activity.
+
 Make a single-panel plot that shows the 24-hour activity time courses for each day.
 
 ```{r}
@@ -144,6 +149,7 @@ accel_df %>%
   geom_smooth(aes(group = day)) 
 ```
 
+In Sundays, activity time tends to be between 500 to 750 minute. In Fridays, Saturday, and Mondays, activity time tends to be between 1250 and 1500 minutes.
 
 ## Question 3
 
@@ -192,6 +198,9 @@ tmax_tmin_p =
   ggplot(aes(x = tmin, y = tmax)) +
   geom_hex()
 ```
+
+Generally, Jan has lower tmax than July.
+And there are 3 outliers in Jan and July in the lower range of the tmax, separately.
 
 (ii) the distribution of snowfall values greater than 0 and less than 100 separately by year
 
